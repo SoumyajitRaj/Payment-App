@@ -1,17 +1,6 @@
 import { useState } from "react";
 import { Lock, CreditCard, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-react";
 
-/**
- * Checkout — "ticket stub" concept
- * Left: order summary styled like a ticket stub (perforated tear edge)
- * Right: payment form styled like the card itself being filled in
- *
- * Wire-up notes (for your Java backend):
- * - onPay() currently simulates a 1.8s processing delay.
- * - Replace the setTimeout block with a fetch("/api/payments/create-intent", {...})
- *   call to your Spring Boot PaymentController, then confirm with Stripe.js
- *   using the returned client_secret.
- */
 
 const ORDER = {
   item: "Pro Plan — Annual",
@@ -37,7 +26,7 @@ export default function CheckoutPage() {
   const [name, setName] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvc, setCvc] = useState("");
-  const [status, setStatus] = useState("idle"); // idle | processing | success
+  const [status, setStatus] = useState("idle"); 
   const [error, setError] = useState("");
 
   const total = ORDER.subtotal + ORDER.tax;
@@ -58,7 +47,7 @@ export default function CheckoutPage() {
   setStatus("processing");
 
   try {
-    // 1. Backend se order create karo
+    
     const res = await fetch("http://localhost:9080/api/payments/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -80,7 +69,7 @@ export default function CheckoutPage() {
       name: "Your Company",
       description: ORDER.item,
       handler: async function (response) {
-        // 3. Payment hone ke baad backend se verify karo
+        
         const verifyRes = await fetch("http://localhost:9080/api/payments/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -96,12 +85,12 @@ export default function CheckoutPage() {
         }
       },
       modal: {
-        ondismiss: () => setStatus("idle"), // user ne popup band kiya bina pay kiye
+        ondismiss: () => setStatus("idle"), 
       },
       theme: { color: "#E8B84B" },
     };
 
-    // 4. Razorpay popup kholo
+    
     const rzp = new window.Razorpay(options);
     rzp.open();
   } catch (err) {
